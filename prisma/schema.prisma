@@ -13,12 +13,22 @@ model User {
   isAdmin   Boolean  @default(false)
   username  String   @unique
   email     String   @unique
+  createdAt DateTime @default(now())
+  profile   Profile?
+  posts     Post[]
+  likes     Like[]
+  followers Follow[] @relation("Followers")
+  following Follow[] @relation("Following")
+}
+
+model Profile {
+  id        String  @id @default(uuid())
   firstName String
   lastName  String
   avatarURL String?
   bio       String?
-  createdAt DateTime @default(now())
-  posts     Post[]
+  user      User    @relation(fields: [userID], references: [id])
+  userID    String  @unique
 }
 
 model Post {
@@ -26,9 +36,30 @@ model Post {
   status      PostStatus
   title       String
   content     String
-  publishedAt DateTime   @default(now())
-  author      User       @relation(fields: [authorId], references: [id])
-  authorId    String
+  createdAt   DateTime   @default(now())
+  publishedAt DateTime?
+  author      User       @relation(fields: [authorID], references: [id])
+  authorID    String
+  likes       Like[]
+}
+
+model Like {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userID], references: [id])
+  userID    String
+  post      Post     @relation(fields: [postID], references: [id])
+  postID    String
+}
+
+model Follow {
+  id          String @id @default(uuid())
+  follower    User   @relation("Followers", fields: [followerID], references: [id])
+  followerID  String
+  following   User   @relation("Following", fields: [followingID], references: [id])
+  followingID String
+
+  @@unique([followerID, followingID])
 }
 
 enum PostStatus {
