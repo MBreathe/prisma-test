@@ -16,11 +16,11 @@ async function main(query: string) {
           profile: {
             OR: [
               {
-                firstName: {
+                first_name: {
                   contains: query,
                   mode: "insensitive",
                 },
-                lastName: {
+                last_name: {
                   contains: query,
                   mode: "insensitive",
                 },
@@ -44,11 +44,12 @@ async function main(query: string) {
     const {
       id,
       username,
-      profile: { id: profileID, firstName, lastName },
+      profile: { id: profile_id, first_name, last_name },
     } = user;
-    return { id, username, profileID, firstName, lastName };
+    return { id, username, profile_id, first_name, last_name };
   });
 
+  if (users.length === 0) return console.log("No users found");
   console.log("This is a raw return straight from the query: ", users);
   console.log(
     "After enabling filtering we get significantly less extra information: ",
@@ -56,7 +57,7 @@ async function main(query: string) {
   );
 }
 
-main("al")
+main("jo")
   .then(async () => {
     await prisma.$disconnect();
   })

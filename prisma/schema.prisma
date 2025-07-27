@@ -9,57 +9,57 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  isAdmin   Boolean  @default(false)
-  username  String   @unique
-  email     String   @unique
-  createdAt DateTime @default(now())
-  profile   Profile?
-  posts     Post[]
-  likes     Like[]
-  followers Follow[] @relation("Followers")
-  following Follow[] @relation("Following")
+  id         String   @id @default(uuid())
+  admin      Boolean  @default(false)
+  username   String   @unique
+  email      String   @unique
+  created_at DateTime @default(now())
+  profile    Profile?
+  posts      Post[]
+  likes      Like[]
+  followers  Follow[] @relation("Followers")
+  following  Follow[] @relation("Following")
 }
 
 model Profile {
-  id        String  @id @default(uuid())
-  firstName String
-  lastName  String
-  avatarURL String?
-  bio       String?
-  user      User    @relation(fields: [userID], references: [id])
-  userID    String  @unique
+  id         String  @id @default(uuid())
+  first_name String
+  last_name  String
+  avatar     String?
+  bio        String?
+  user       User    @relation(fields: [user_id], references: [id])
+  user_id    String  @unique
 }
 
 model Post {
-  id          String     @id @default(uuid())
-  status      PostStatus
-  title       String
-  content     String
-  createdAt   DateTime   @default(now())
-  publishedAt DateTime?
-  author      User       @relation(fields: [authorID], references: [id])
-  authorID    String
-  likes       Like[]
+  id           String     @id @default(uuid())
+  status       PostStatus
+  title        String
+  content      String
+  created_at   DateTime   @default(now())
+  published_at DateTime?
+  author       User       @relation(fields: [author_id], references: [id])
+  author_id    String
+  likes        Like[]
 }
 
 model Like {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  user      User     @relation(fields: [userID], references: [id])
-  userID    String
-  post      Post     @relation(fields: [postID], references: [id])
-  postID    String
+  id         String   @id @default(uuid())
+  created_at DateTime @default(now())
+  user       User     @relation(fields: [user_id], references: [id])
+  user_id    String
+  post       Post     @relation(fields: [post_id], references: [id])
+  post_id    String
 }
 
 model Follow {
-  id          String @id @default(uuid())
-  follower    User   @relation("Followers", fields: [followerID], references: [id])
-  followerID  String
-  following   User   @relation("Following", fields: [followingID], references: [id])
-  followingID String
+  id           String @id @default(uuid())
+  follower     User   @relation("Followers", fields: [follower_id], references: [id])
+  follower_id  String
+  following    User   @relation("Following", fields: [following_id], references: [id])
+  following_id String
 
-  @@unique([followerID, followingID])
+  @@unique([follower_id, following_id])
 }
 
 enum PostStatus {

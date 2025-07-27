@@ -8,11 +8,11 @@ const prisma = new PrismaClient().$extends(withAccelerate());
 async function main() {
   // clearing existing data
   await prisma.$transaction([
-    prisma.user.deleteMany(),
-    prisma.profile.deleteMany(),
+    prisma.like.deleteMany(),
     prisma.post.deleteMany(),
     prisma.follow.deleteMany(),
-    prisma.like.deleteMany(),
+    prisma.profile.deleteMany(),
+    prisma.user.deleteMany(),
   ]);
 
   console.log("Creating users and profiles...");
@@ -28,12 +28,12 @@ async function main() {
       data: {
         username,
         email,
-        createdAt: faker.date.past({ years: 3 }),
+        created_at: faker.date.past({ years: 3 }),
         profile: {
           create: {
-            firstName,
-            lastName,
-            avatarURL: faker.image.avatar(),
+            first_name: firstName,
+            last_name: lastName,
+            avatar: faker.image.avatar(),
             bio: faker.lorem.paragraphs({ min: 0, max: 5 }),
           },
         },
@@ -44,7 +44,7 @@ async function main() {
     });
 
     users.push(user);
-    if (i % 10 === 0) console.log(`Created ${i + 1} users`);
+    if (i % 10 === 0) console.log(`Created ${i} users`);
   }
 
   console.log("Creating posts...");
@@ -61,9 +61,9 @@ async function main() {
           status: isPublished ? PostStatus.PUBLISHED : PostStatus.DRAFT,
           title: faker.lorem.sentence(),
           content: faker.lorem.paragraphs({ min: 1, max: 8 }),
-          createdAt: faker.date.recent({ days: 300 }),
-          publishedAt: isPublished ? faker.date.recent({ days: 300 }) : null,
-          authorID: user.id,
+          created_at: faker.date.recent({ days: 300 }),
+          published_at: isPublished ? faker.date.recent({ days: 300 }) : null,
+          author_id: user.id,
         },
       });
 
@@ -78,8 +78,8 @@ async function main() {
       if (follower.id !== following.id && faker.datatype.boolean(0.3)) {
         await prisma.follow.create({
           data: {
-            followerID: follower.id,
-            followingID: following.id,
+            follower_id: follower.id,
+            following_id: following.id,
           },
         });
       }
@@ -87,15 +87,15 @@ async function main() {
   }
 
   console.log("Creating likes...");
-  // users like ~20% of posts
+  // users like ~10% of posts
   for (const user of users) {
     for (const post of posts) {
-      if (post.authorID !== user.id && faker.datatype.boolean(0.2)) {
+      if (post.author_id !== user.id && faker.datatype.boolean(0.1)) {
         await prisma.like.create({
           data: {
-            userID: user.id,
-            postID: post.id,
-            createdAt: faker.date.recent({ days: 300 }),
+            user_id: user.id,
+            post_id: post.id,
+            created_at: faker.date.recent({ days: 300 }),
           },
         });
       }
