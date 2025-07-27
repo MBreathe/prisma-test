@@ -7,6 +7,7 @@ async function main(query?: string) {
     where: {
       title: {
         contains: query ? query : "",
+        mode: "insensitive",
       },
     },
   });
